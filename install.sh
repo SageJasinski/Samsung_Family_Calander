@@ -41,7 +41,7 @@ fi
 echo ""
 echo "Installing system dependencies..."
 sudo apt-get update
-sudo apt-get install -y python3-pip python3-venv chromium-browser unclutter xdotool
+sudo apt-get install -y python3-pip python3-venv chromium unclutter xdotool
 
 # Create virtual environment if it doesn't exist
 if [ ! -d "$INSTALL_DIR/venv" ]; then
@@ -83,7 +83,7 @@ cat > "$AUTOSTART_DIR/autostart" << EOF
 @xset -dpms
 @xset s noblank
 @unclutter -idle 0.1 -root
-@chromium-browser --noerrdialogs --disable-infobars --kiosk http://localhost:5000 --check-for-update-interval=31536000
+@chromium --noerrdialogs --disable-infobars --kiosk http://localhost:5000 --check-for-update-interval=31536000
 EOF
 
 echo ""
