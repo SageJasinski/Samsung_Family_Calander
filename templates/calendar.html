@@ -50,6 +50,60 @@
             margin-top: 10px;
         }
 
+        .status-info {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9em;
+            text-align: left;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            font-weight: bold;
+            opacity: 0.8;
+        }
+
+        .status-value {
+            opacity: 0.9;
+        }
+
+        .status-connected {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .status-error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .calendar-list {
+            margin-top: 10px;
+            padding-left: 20px;
+            font-size: 0.85em;
+        }
+
+        .calendar-item {
+            padding: 3px 0;
+        }
+
+        .calendar-selected {
+            color: #28a745;
+            font-weight: bold;
+        }
+
         .calendar-view {
             display: grid;
             gap: 20px;
@@ -220,6 +274,21 @@
             <h1>Family Calendar</h1>
             <div class="current-date" id="currentDate"></div>
             <div class="last-updated">Last updated: <span id="lastUpdated">Loading...</span></div>
+
+            <div class="status-info" id="statusInfo">
+                <div class="status-row">
+                    <span class="status-label">Connection:</span>
+                    <span class="status-value" id="connectionStatus">Checking...</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Calendar:</span>
+                    <span class="status-value" id="calendarName">Loading...</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Events Found:</span>
+                    <span class="status-value" id="eventCount">0</span>
+                </div>
+            </div>
         </header>
 
         <div class="calendar-view" id="calendarView">
@@ -268,6 +337,9 @@
             const calendarView = document.getElementById('calendarView');
             const eventsData = data.events_by_date;
 
+            // Update event count
+            document.getElementById('eventCount').textContent = data.event_count || 0;
+
             if (!eventsData || Object.keys(eventsData).length === 0) {
                 calendarView.innerHTML = '<div class="no-events">No upcoming events</div>';
                 return;
@@ -313,6 +385,39 @@
             document.getElementById('lastUpdated').textContent = data.last_updated;
         }
 
+        function loadStatus() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    const connectionStatus = document.getElementById('connectionStatus');
+                    const calendarName = document.getElementById('calendarName');
+
+                    if (data.connected) {
+                        connectionStatus.innerHTML = '<span class="status-connected">✓ Connected</span>';
+
+                        if (data.selected_calendar) {
+                            calendarName.textContent = data.selected_calendar.name;
+                        } else {
+                            calendarName.innerHTML = '<span class="status-error">No calendar selected</span>';
+                        }
+
+                        // Show available calendars in console for debugging
+                        console.log('Available calendars:', data.available_calendars);
+                        console.log('Selected calendar:', data.selected_calendar);
+                        console.log('Configured calendar name:', data.configured_calendar_name);
+                    } else {
+                        connectionStatus.innerHTML = '<span class="status-error">✗ Connection Failed</span>';
+                        calendarName.innerHTML = `<span class="status-error">${data.error}</span>`;
+                        console.error('Connection error:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching status:', error);
+                    document.getElementById('connectionStatus').innerHTML =
+                        '<span class="status-error">✗ Error</span>';
+                });
+        }
+
         function loadEvents() {
             fetch('/api/events')
                 .then(response => response.json())
@@ -335,9 +440,13 @@
         updateCurrentDate();
         setInterval(updateCurrentDate, 60000);
 
-        // Load events immediately and then refresh periodically
+        // Load status and events immediately
+        loadStatus();
         loadEvents();
+
+        // Refresh periodically
         setInterval(loadEvents, REFRESH_INTERVAL);
+        setInterval(loadStatus, REFRESH_INTERVAL);
     </script>
 </body>
 </html>

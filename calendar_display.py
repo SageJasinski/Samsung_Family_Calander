@@ -66,6 +66,59 @@ def connect_to_calendar():
         return None
 
 
+def get_calendar_info():
+    """Get calendar connection information for debugging"""
+    try:
+        client = caldav.DAVClient(
+            url=config['caldav_url'],
+            username=config['username'],
+            password=config['password']
+        )
+        principal = client.principal()
+        calendars = principal.calendars()
+
+        calendar_list = []
+        selected_calendar = None
+
+        for cal in calendars:
+            cal_info = {
+                'name': cal.name,
+                'url': str(cal.url)
+            }
+            calendar_list.append(cal_info)
+
+            # Check if this is the selected calendar
+            calendar_name = config.get('calendar_name')
+            if calendar_name and calendar_name.lower() in cal.name.lower():
+                selected_calendar = cal_info
+
+        # If no specific calendar selected, use first one
+        if not selected_calendar and calendar_list:
+            selected_calendar = calendar_list[0]
+
+        return {
+            'success': True,
+            'connected': True,
+            'caldav_url': config['caldav_url'],
+            'username': config['username'],
+            'configured_calendar_name': config.get('calendar_name', 'Not specified'),
+            'available_calendars': calendar_list,
+            'selected_calendar': selected_calendar,
+            'total_calendars': len(calendar_list),
+            'timezone': config.get('timezone', 'UTC'),
+            'days_to_display': config.get('days_to_display', 14)
+        }
+    except Exception as e:
+        return {
+            'success': False,
+            'connected': False,
+            'error': str(e),
+            'caldav_url': config.get('caldav_url', 'Not configured'),
+            'username': config.get('username', 'Not configured'),
+            'configured_calendar_name': config.get('calendar_name', 'Not specified')
+        }
+
+
 def get_events(days_ahead=14):
     """Fetch events from the calendar"""
     calendar = connect_to_calendar()
@@ -190,6 +243,7 @@ def api_events():
             'success': True,
             'events': formatted_events,
             'events_by_date': events_by_date,
+            'event_count': len(formatted_events),
             'last_updated': datetime.now().strftime('%I:%M %p')
         })
     except Exception as e:
@@ -198,6 +252,12 @@ def api_events():
             'success': False,
             'error': str(e)
         }), 500
+
+
+@app.route('/api/status')
+def api_status():
+    """API endpoint to get calendar connection status"""
+    return jsonify(get_calendar_info())
 
 
 def signal_handler(sig, frame):
