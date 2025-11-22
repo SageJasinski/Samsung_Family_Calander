@@ -109,10 +109,14 @@ def get_calendar_info():
             'days_to_display': config.get('days_to_display', 14)
         }
     except Exception as e:
+        error_msg = str(e)
+        if "NameResolutionError" in error_msg or "Failed to resolve" in error_msg:
+            error_msg += " (Check your CalDAV URL in config.json. Samsung Cloud URLs are not supported; use Google Calendar instead.)"
+            
         return {
             'success': False,
             'connected': False,
-            'error': str(e),
+            'error': error_msg,
             'caldav_url': config.get('caldav_url', 'Not configured'),
             'username': config.get('username', 'Not configured'),
             'configured_calendar_name': config.get('calendar_name', 'Not specified')

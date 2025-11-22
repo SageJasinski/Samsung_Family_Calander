@@ -61,28 +61,6 @@ Edit the configuration:
 
 ```json
 {
-  "caldav_url": "https://caldav.calendar.samsung.com",
-  "username": "your_samsung_email@example.com",
-  "password": "your_samsung_password",
-  "calendar_name": "Family",
-  "timezone": "America/New_York",
-  "refresh_interval": 300,
-  "days_to_display": 14,
-  "port": 5000,
-  "debug": false
-}
-```
-
-**Configuration Options**:
-- `caldav_url`: Samsung's CalDAV server URL
-- `username`: Your Samsung account email
-- `password`: Your Samsung account password
-- `calendar_name`: Name of the calendar to display (leave as "Family" or change to match your calendar)
-- `timezone`: Your local timezone (e.g., "America/New_York", "Europe/London", "America/Los_Angeles")
-- `refresh_interval`: How often to sync with Samsung Calendar (in seconds)
-- `days_to_display`: Number of days ahead to show events
-- `port`: Port for the web server (default: 5000)
-- `debug`: Enable debug mode (set to false for production)
 
 ### 4. Run the Installation Script
 
