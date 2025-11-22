@@ -1,0 +1,15 @@
+[Unit]
+Description=Family Calendar Display
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/family_calendar
+Environment="PATH=/home/pi/family_calendar/venv/bin"
+ExecStart=/home/pi/family_calendar/venv/bin/python3 /home/pi/family_calendar/calendar_display.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

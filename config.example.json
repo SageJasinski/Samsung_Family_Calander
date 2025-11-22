@@ -1,0 +1,11 @@
+{
+  "caldav_url": "https://caldav.calendar.samsung.com",
+  "username": "your_samsung_email@example.com",
+  "password": "your_samsung_password",
+  "calendar_name": "Family",
+  "timezone": "America/New_York",
+  "refresh_interval": 300,
+  "days_to_display": 14,
+  "port": 5000,
+  "debug": false
+}
