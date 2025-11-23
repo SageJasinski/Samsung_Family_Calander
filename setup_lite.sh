@@ -37,6 +37,15 @@ if [ "$mode_choice" = "2" ]; then
 else
     echo "standard" > "$INSTALL_DIR/display_mode.conf"
     echo -e "Mode set to: ${BLUE}Standard${NC}"
+    echo "standard" > "$INSTALL_DIR/display_mode.conf"
+    echo -e "Mode set to: ${BLUE}Standard${NC}"
+fi
+
+# 1.5 Check Config
+if [ ! -f "$INSTALL_DIR/config.json" ]; then
+    echo -e "\n${GREEN}Creating config.json from example...${NC}"
+    cp "$INSTALL_DIR/config.example.json" "$INSTALL_DIR/config.json"
+    echo "Please remember to edit config.json with your details!"
 fi
 
 # 2. Install System Dependencies
