@@ -34,7 +34,7 @@ if [ "$MODE" = "debug" ]; then
     sleep 2
     
     # Launch Chromium (allow windowed mode for debugging)
-    chromium-browser --window-position=0,300 --window-size=1024,768 http://localhost:5000 &
+    chromium --window-position=0,300 --window-size=1024,768 http://localhost:5000 &
     
 else
     # STANDARD MODE
@@ -49,5 +49,5 @@ else
     # We use file:// protocol for loading page so it works even if Flask isn't up yet
     LOADING_PAGE="file://$INSTALL_DIR/templates/loading.html"
     
-    chromium-browser --noerrdialogs --disable-infobars --kiosk "$LOADING_PAGE" --check-for-update-interval=31536000 &
+    chromium --noerrdialogs --disable-infobars --kiosk "$LOADING_PAGE" --check-for-update-interval=31536000 &
 fi

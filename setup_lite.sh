@@ -47,12 +47,11 @@ sudo apt-get install -y --no-install-recommends \
     x11-xserver-utils \
     xinit \
     openbox \
-    chromium-browser \
+    chromium \
     python3-pip \
     python3-venv \
     unclutter \
-    xterm \
-    libatlas-base-dev
+    xterm
 
 # 3. Python Setup
 echo -e "\n${GREEN}Setting up Python Environment...${NC}"
